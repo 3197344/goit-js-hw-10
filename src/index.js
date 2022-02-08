@@ -6,7 +6,36 @@ const fetchInput = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 
+fetchInput.addEventListener('input', (event) => {
+    // fetchInput = event.currentTarget.value;
+    fetchCountries()
+        .then((countries) => renderCountryList(countries))
+        .catch((error) => console.log(error));
+});
 
+function renderCountryList(countries) {
+    const markup = countries
+        .map((country) => {
+            return `
+            <li>
+            <img src="${country.flags.svg}" alt="flag">
+            <p><b>${country.name.official}</b></p>
+            </li>
+
+            <li>
+            <p><b>Capital</b>: ${country.capital}</p>
+            </li>
+            
+            <li>
+            <p><b>Population</b>: ${country.population}</p>
+            </li>
+            
+            <li>
+            <p><b>Languages</b>: ${country.languages}</p>
+            </li>`;
+        }).join("");
+    countryList.innerHTML = markup;
+}
 // console.log(fetchCountries);
 // https://restcountries.com/v2/all?fields=name,capital,currencies
 /*
