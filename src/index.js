@@ -1,24 +1,44 @@
 import './css/styles.css';
 import { fetchCountries } from './fetchCountries';
 import Notiflix from 'notiflix';
+import debounce from 'lodash.debounce';
+
+// const debounce = require('lodash.debounce');
+
 const DEBOUNCE_DELAY = 300;
 const fetchInput = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 
-fetchInput.addEventListener('input', (event) => {
-    // fetchInput = event.currentTarget.value;
-    fetchCountries()
-        .then((countries) => renderCountryList(countries))
-        .catch((error) => console.log(error));
-});
+let countriesInput;
+const a = debounce(handleSubmit, DEBOUNCE_DELAY);
+
+fetchInput.addEventListener('input', a);
+
+
+function handleSubmit(event){
+    event.preventDefault();
+
+    let countriesInput = event.target.value;
+    
+    console.log(countriesInput);
+    return countriesInput;
+
+    // fetchCountries()
+    //     .then((countries) => renderCountryList(countries))
+    //     .catch((error) => console.log(error));
+}
+
+fetchCountries(countriesInput)
+.then((countries) => renderCountryList(countries))
+.catch((error) => console.log(error));
 
 function renderCountryList(countries) {
     const markup = countries
         .map((country) => {
             return `
             <li>
-            <img src="${country.flags.svg}" alt="flag">
+            <img src="${country.flags.svg}" alt="flag" width = "80">
             <p><b>${country.name.official}</b></p>
             </li>
 
@@ -46,4 +66,12 @@ capital - столица
 population - население
 flags.svg - ссылка на изображение флага
 languages - массив языков
+
+.then(name => {
+console.log(name);
+})
+.catch(error =>{
+console.log(error);
+});
+
 */ 
