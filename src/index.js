@@ -1,77 +1,92 @@
 import './css/styles.css';
-import { fetchCountries } from './fetchCountries';
+import fetchCountries from './fetchCountries';
 import Notiflix from 'notiflix';
 import debounce from 'lodash.debounce';
+// var debounce = require('lodash.debounce');
 
-// const debounce = require('lodash.debounce');
-
-const DEBOUNCE_DELAY = 300;
-const fetchInput = document.querySelector('#search-box');
+const DEBOUNCE_DELAY = 1000;
+const countryInput = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 
-let countriesInput;
-const a = debounce(handleSubmit, DEBOUNCE_DELAY);
+countryList.style.listStyle = "none";
+// countryList.style.display = "grid";
+// countryList.style.margin = '30px';
+// countryList.style.fontsize = '400px';
+countryInfo.style.listStyle = "none";
 
-fetchInput.addEventListener('input', a);
+
+const a = debounce(handleSubmitCountries, DEBOUNCE_DELAY);
+
+countryInput.addEventListener('input', a);
 
 
-function handleSubmit(event){
+function handleSubmitCountries(event) {
     event.preventDefault();
 
-    let countriesInput = event.target.value;
-    
-    console.log(countriesInput);
-    return countriesInput;
+    const countriesInputName = event.target.value.trim();
+    console.log(countriesInputName);
 
-    // fetchCountries()
-    //     .then((countries) => renderCountryList(countries))
-    //     .catch((error) => console.log(error));
+    if (countriesInputName === "") {
+        cleanInput();
+    }
+    else {
+        fetchCountries(countriesInputName)
+        .then(renderCard)
+        .catch(() =>
+        // console.log("Oops, there is no country with that name");
+        Notiflix.Notify.failure("Oops, there is no country with that name"))
+        }
 }
 
-fetchCountries(countriesInput)
-.then((countries) => renderCountryList(countries))
-.catch((error) => console.log(error));
+function renderCard(el) {
+    if (el.length >= 10) {
+        cleanInput()
+        Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
+    }
+    
+    else if (el.length >= 2) {
+            cleanInput();
+            countryInfo.insertAdjacentHTML('beforebegin', renderCountries())
+    }
+    
+    else {
+        cleanInput()
+        countryList.insertAdjacentHTML('beforebegin', renderCountryList())    
+    }
+}
+
 
 function renderCountryList(countries) {
-    const markup = countries
+    const markupRenderCountryList = countries
+        .map((country) => {
+            return `
+            <img src="${country.flags.svg}" alt="flag" width = "80">
+            <p><b>${country.name.official}</b></p>
+            <p><b>Capital</b>: ${country.capital}</p>
+            <p><b>Population</b>: ${country.population}</p>
+            <p><b>Languages</b>: ${country.languages}</p>
+            `;
+        }).join("");
+    return markupRenderCountryList;
+    // countryInfo.innerHTML = markup;
+}
+
+function renderCountries(countries) {
+    const markupRenderCountries = countries
         .map((country) => {
             return `
             <li>
-            <img src="${country.flags.svg}" alt="flag" width = "80">
+            <img src="${country.flags.svg}" alt="flag" width = "100" >
             <p><b>${country.name.official}</b></p>
-            </li>
-
-            <li>
-            <p><b>Capital</b>: ${country.capital}</p>
-            </li>
-            
-            <li>
-            <p><b>Population</b>: ${country.population}</p>
-            </li>
-            
-            <li>
-            <p><b>Languages</b>: ${country.languages}</p>
             </li>`;
         }).join("");
-    countryList.innerHTML = markup;
+    return markupRenderCountries;
+    // countryList.innerHTML = markup;
 }
-// console.log(fetchCountries);
-// https://restcountries.com/v2/all?fields=name,capital,currencies
-/*
-Тебе нужны только следующие свойства:
 
-name.official - полное имя страны
-capital - столица
-population - население
-flags.svg - ссылка на изображение флага
-languages - массив языков
+function cleanInput () {
+    countryInfo.innerHTML = "";
+    countryList.innerHTML = ""; 
+}
 
-.then(name => {
-console.log(name);
-})
-.catch(error =>{
-console.log(error);
-});
-
-*/ 
