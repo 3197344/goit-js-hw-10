@@ -44,15 +44,19 @@ function renderCard(el) {
         cleanInput()
         Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
     }
-    
+
     else if (el.length >= 2) {
             cleanInput();
-            countryInfo.insertAdjacentHTML('beforebegin', renderCountries())
+        const markup = renderCountries(markupRenderCountries);
+        // countryInfo.insertAdjacentHTML('beforebegin', markup)
+        countryInfo.innerHTML = markup;
     }
     
     else {
         cleanInput()
-        countryList.insertAdjacentHTML('beforebegin', renderCountryList())    
+        const markupEl = renderCountryList(markupRenderCountryList)
+        // countryList.insertAdjacentHTML('beforebegin', markupEl)  
+        countryList.innerHTML = markupEl;
     }
 }
 
@@ -65,7 +69,7 @@ function renderCountryList(countries) {
             <p><b>${country.name.official}</b></p>
             <p><b>Capital</b>: ${country.capital}</p>
             <p><b>Population</b>: ${country.population}</p>
-            <p><b>Languages</b>: ${country.languages}</p>
+            <p><b>Languages</b>: ${Object.values(country.languages)}</p>
             `;
         }).join("");
     return markupRenderCountryList;
