@@ -47,14 +47,14 @@ function renderCard(el) {
 
     else if (el.length >= 2) {
             cleanInput();
-        const markup = renderCountries(markupRenderCountries);
+        const markup = renderCountries(el);
         // countryInfo.insertAdjacentHTML('beforebegin', markup)
         countryInfo.innerHTML = markup;
     }
     
     else {
         cleanInput()
-        const markupEl = renderCountryList(markupRenderCountryList)
+        const markupEl = renderCountryList(el)
         // countryList.insertAdjacentHTML('beforebegin', markupEl)  
         countryList.innerHTML = markupEl;
     }
